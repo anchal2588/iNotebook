@@ -2,120 +2,71 @@ import { useState } from "react";
 import NoteContext from "./NoteContext";
 
 const NoteState = (props) => {
-  const notes = [
-    {
-      _id: "62563c7f914c7fa50c57dd96",
-      user: "62557e604d548b656934e7ad",
-      title: "My title",
-      description: "My description.",
-      tag: "peronal title",
-      date: "2022-04-13T02:59:11.233Z",
-      __v: 0,
-    },
-    {
-      _id: "62563c8c914c7fa50c57dd98",
-      user: "62557e604d548b656934e7ad",
-      title: "My title2",
-      description: "My description addition .",
-      tag: "general",
-      date: "2022-04-13T02:59:24.932Z",
-      __v: 0,
-    },
-    {
-        _id: "62563c7f914c7fa50c57dd96",
-        user: "62557e604d548b656934e7ad",
-        title: "My title",
-        description: "My description.",
-        tag: "peronal title",
-        date: "2022-04-13T02:59:11.233Z",
-        __v: 0,
-      },
-      {
-        _id: "62563c8c914c7fa50c57dd98",
-        user: "62557e604d548b656934e7ad",
-        title: "My title2",
-        description: "My description addition .",
-        tag: "general",
-        date: "2022-04-13T02:59:24.932Z",
-        __v: 0,
-      },
-      {
-        _id: "62563c7f914c7fa50c57dd96",
-        user: "62557e604d548b656934e7ad",
-        title: "My title",
-        description: "My description.",
-        tag: "peronal title",
-        date: "2022-04-13T02:59:11.233Z",
-        __v: 0,
-      },
-      {
-        _id: "62563c8c914c7fa50c57dd98",
-        user: "62557e604d548b656934e7ad",
-        title: "My title2",
-        description: "My description addition .",
-        tag: "general",
-        date: "2022-04-13T02:59:24.932Z",
-        __v: 0,
-      },
-      {
-        _id: "62563c7f914c7fa50c57dd96",
-        user: "62557e604d548b656934e7ad",
-        title: "My title",
-        description: "My description.",
-        tag: "peronal title",
-        date: "2022-04-13T02:59:11.233Z",
-        __v: 0,
-      },
-      {
-        _id: "62563c8c914c7fa50c57dd98",
-        user: "62557e604d548b656934e7ad",
-        title: "My title2",
-        description: "My description addition .",
-        tag: "general",
-        date: "2022-04-13T02:59:24.932Z",
-        __v: 0,
-      },
-      {
-        _id: "62563c7f914c7fa50c57dd96",
-        user: "62557e604d548b656934e7ad",
-        title: "My title",
-        description: "My description.",
-        tag: "peronal title",
-        date: "2022-04-13T02:59:11.233Z",
-        __v: 0,
-      },
-      {
-        _id: "62563c8c914c7fa50c57dd98",
-        user: "62557e604d548b656934e7ad",
-        title: "My title2",
-        description: "My description addition .",
-        tag: "general",
-        date: "2022-04-13T02:59:24.932Z",
-        __v: 0,
-      },
-  ];
+  const host = 'http://localhost:5000';
+  const notes = [];
 
   const [note, setNote] = useState(notes);
+
+  //get all notes
+  const getNote = async ()=>{
+    const response = await fetch(`${host}/api/notes/getNotes`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      },
+      referrerPolicy: 'no-referrer',
+     });
+      const allNotes =  await response.json();
+      setNote(allNotes);
+
+  }
+
   //add note
-  const addNote = (title, discription, tag)=>{
-    const newNote = {
-        _id: "62563c8c914c7fa50c57dd98",
-        user: "62557e604d548b656934e7ad",
-        title: title,
-        description: discription,
-        tag: tag,
-        date: "2022-04-13T02:59:24.932Z",
-        __v: 0,
-      }
-    setNote(note.concat(newNote));
+  const addNote = async (title, description, tag)=>{
+    const response = await fetch(`${host}/api/notes/addNotes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      },
+      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify({title, description, tag}) });
+      getNote();
+      
   }
   //edit note
+  const editNote = async (id, title, description, tag)=>{
+    const response = await fetch(`${host}/api/notes/updateNotes/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      },
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify({title, description, tag}) // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+     });
+      getNote();
+  }
 
   //delete note
+  const deleteNote = async (id)=>{
+    const response = await fetch(`${host}/api/notes/deleteNotes/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      },
+      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+     });
+     getNote();
+  }
   return (
-    <NoteContext.Provider value={{ note, addNote }}>
+    <>
+    <NoteContext.Provider value={{ note, addNote, deleteNote, getNote, editNote}}>
       {props.children}
     </NoteContext.Provider>
+    </>
   );
 };
 export default NoteState;
