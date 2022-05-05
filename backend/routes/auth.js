@@ -53,6 +53,35 @@ router.post(
   }
 );
 
+//update user
+router.put(
+  "/updateUser",
+  [
+    body("name").isLength({ min: 3 }),
+  ],
+  async (req, res) => {
+    //if there are erros, retur bad request
+    let status = false;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ status, errors: errors.array() });
+    }
+    try {
+      const {id, name} = req.body
+
+      let user = await User.findByIdAndUpdate(id, {
+        name: name
+      });
+      user = await User.findById(id).select("-password")
+      status =  true; 
+      res.json({status, user});
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal server error")
+    }
+  }
+);
+
 //authenticate user
 
 router.post(

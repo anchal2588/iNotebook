@@ -33,7 +33,7 @@ function App() {
           <div className="container">
             <Routes>
               <Route exact path="/" element={<Home key="home" alert={showAlert}/>} />
-              <Route exact path="/about" element={<About key="about" />} />
+              <Route exact path="/about" element={<About key="about" alert={showAlert}/>} />
               <Route exact path="/login" element={<Login key="login" alert={showAlert}/>} />
               <Route exact path="/signup" element={<Signup key="signup" alert={showAlert}/>} />
             </Routes>

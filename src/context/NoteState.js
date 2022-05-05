@@ -61,9 +61,38 @@ const NoteState = (props) => {
      });
      getNote();
   }
+
+  //get all notes
+  const getUser = async ()=>{
+    const response = await fetch(`${host}/api/auth/getUser`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem('token')
+      },
+      referrerPolicy: 'no-referrer',
+     });
+      const userDetails =  await response.json();
+      return userDetails;
+
+  }
+
+  //update user details
+  const updateUser = async (id, name)=>{
+    const response = await fetch(`${host}/api/auth/updateUser`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({id, name})
+     });
+      const userDetails =  await response.json();
+      return userDetails;
+
+  }
   return (
     <>
-    <NoteContext.Provider value={{ note, addNote, deleteNote, getNote, editNote}}>
+    <NoteContext.Provider value={{ note, addNote, deleteNote, getNote, editNote, getUser, updateUser}}>
       {props.children}
     </NoteContext.Provider>
     </>
